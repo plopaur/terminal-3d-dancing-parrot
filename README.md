@@ -107,3 +107,7 @@ mypy
 - `src/dancing_parrot/song.py` has the melody, lyrics and synthesiser; `audio.py` picks an audio backend, plays the song and keeps the song clock
 - `src/dancing_parrot/renderer.py` contains the curses loop: drift-free frame timing, input, resize handling and colour
 - `src/dancing_parrot/cli.py` handles argument parsing, TTY/locale checks and signal handling
+
+## License
+
+[MIT](LICENSE) © 2026 Philipp Lopaur
