@@ -49,6 +49,9 @@ NOTE_COLORS: tuple[int, ...] = (
     curses.COLOR_MAGENTA,
 )
 
+HIGHLIGHT_KEY = "Y"
+"""Pixel key whose colour highlights the syllable being sung."""
+
 UPPER_HALF = "▀"
 LOWER_HALF = "▄"
 QUIT_KEYS = frozenset({ord("q"), ord("Q"), 27})  # 27 = Esc
@@ -135,6 +138,63 @@ def fit_scale(frame: Frame, rows: int, cols: int) -> int:
     return 0
 
 
+@dataclass(frozen=True)
+class Layout:
+    """Where a frame and its decorations go on a screen of a given size."""
+
+    pixels: tuple[str, ...]
+    """The scaled pixels, padded to an even number of rows."""
+    top: int
+    left: int
+    note_y: int
+    note_x: int
+    lyric_y: int
+
+    @property
+    def height(self) -> int:
+        """Height in character cells (two pixels each)."""
+        return len(self.pixels) // 2
+
+    @property
+    def width(self) -> int:
+        return len(self.pixels[0])
+
+
+def layout(frame: Frame, rows: int, cols: int) -> Layout | None:
+    """Lay the frame out centred, lyric line below, hint at the bottom.
+
+    Returns ``None`` if the terminal is too small at every scale.
+    """
+    factor = fit_scale(frame, rows, cols)
+    if factor == 0:
+        return None
+    pixels = scale(frame.pixels, factor)
+    if len(pixels) % 2:
+        pixels += (TRANSPARENT * len(pixels[0]),)
+    height = len(pixels) // 2
+    width = len(pixels[0])
+    top = max(0, (rows - 3 - height) // 2)
+    left = (cols - width) // 2
+    return Layout(
+        pixels=pixels,
+        top=top,
+        left=left,
+        note_y=top + height // 4 + frame.note_side * 2,
+        note_x=left - 2 if frame.note_side == 0 else left + width + 1,
+        lyric_y=top + height + 1,
+    )
+
+
+def lyric_line(lyric: song.SongState, cols: int) -> tuple[str, int]:
+    """The lyric line clipped to the screen, and its centred column."""
+    line = lyric.line[:cols]
+    return line, max(0, (cols - len(line)) // 2)
+
+
+def hint_x(cols: int) -> int:
+    return max(0, (cols - len(HINT)) // 2)
+
+
 def _draw(
     screen: curses.window,
     frame: Frame,
@@ -144,37 +204,29 @@ def _draw(
 ) -> None:
     screen.erase()
     rows, cols = screen.getmaxyx()
-    factor = fit_scale(frame, rows, cols)
+    where = layout(frame, rows, cols)
 
-    if factor == 0:
+    if where is None:
         message = "Terminal too small - please enlarge"
         _add(screen, rows // 2, max(0, (cols - len(message)) // 2), message, 0)
         screen.refresh()
         return
 
-    pixels = scale(frame.pixels, factor)
-    if len(pixels) % 2:
-        pixels += (TRANSPARENT * len(pixels[0]),)
-    height = len(pixels) // 2
-    width = len(pixels[0])
-    top = max(0, (rows - 3 - height) // 2)
-    left = (cols - width) // 2
-
-    for y in range(height):
+    pixels = where.pixels
+    for y in range(where.height):
         upper, lower = pixels[2 * y], pixels[2 * y + 1]
-        for x in range(width):
+        for x in range(where.width):
             char, attr = _cell(upper[x], lower[x], palette, color)
             if char != " ":
-                _add(screen, top + y, left + x, char, attr)
+                _add(screen, where.top + y, where.left + x, char, attr)
 
-    note_x = left - 2 if frame.note_side == 0 else left + width + 1
-    note_y = top + height // 4 + (frame.note_side * 2)
-    _add(screen, note_y, note_x, frame.note, palette.note(frame.note_color_index) if color else 0)
+    note_attr = palette.note(frame.note_color_index) if color else 0
+    _add(screen, where.note_y, where.note_x, frame.note, note_attr)
 
     if lyric is not None:
-        _draw_lyric(screen, lyric, top + height + 1, cols, palette, color)
+        _draw_lyric(screen, lyric, where.lyric_y, cols, palette, color)
 
-    _add(screen, rows - 1, max(0, (cols - len(HINT)) // 2), HINT, curses.A_DIM)
+    _add(screen, rows - 1, hint_x(cols), HINT, curses.A_DIM)
     screen.refresh()
 
 
@@ -182,11 +234,10 @@ def _draw_lyric(
     screen: curses.window, lyric: song.SongState, y: int, cols: int, palette: Palette, color: bool
 ) -> None:
     """Karaoke line: the syllable being sung is highlighted."""
-    line = lyric.line[:cols]
-    x = max(0, (cols - len(line)) // 2)
+    line, x = lyric_line(lyric, cols)
     _add(screen, y, x, line, curses.A_DIM)
     if lyric.end > lyric.start:
-        highlight = curses.A_BOLD | (palette.pair("Y", None) if color else curses.A_REVERSE)
+        highlight = curses.A_BOLD | (palette.pair(HIGHLIGHT_KEY, None) if color else curses.A_REVERSE)
         _add(screen, y, x + lyric.start, line[lyric.start : lyric.end], highlight)
 
 

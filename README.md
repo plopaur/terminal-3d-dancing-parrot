@@ -1,6 +1,6 @@
 # dancing-parrot
 
-![The parrot singing in a terminal](docs/screenshot.svg)
+![The parrot singing in a terminal](https://raw.githubusercontent.com/plopaur/terminal-3d-dancing-parrot/main/docs/screenshot.svg)
 
 An animated dancing blue-and-yellow macaw for your Linux terminal. It sways,
 stomps, flaps, every few seconds spins a full 360° turn, and sings: its beak

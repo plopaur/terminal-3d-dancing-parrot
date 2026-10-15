@@ -346,7 +346,7 @@
 <rect x="259" y="723" width="27" height="9" fill="#00005f"/>
 <rect x="250" y="732" width="36" height="9" fill="#00005f"/>
 <rect x="250" y="741" width="36" height="9" fill="#00005f"/>
-<text x="673" y="278" fill="#ff5f5f" font-weight="bold" xml:space="preserve">♫</text>
+<text x="673" y="278" fill="#cdcd00" font-weight="bold" xml:space="preserve">♫</text>
 <text x="241" y="782" fill="#6c7086" xml:space="preserve">Polly wants to <tspan fill="#ffd700" font-weight="bold">dance</tspan> tonight,</text>
 <text x="286" y="836" fill="#6c7086" xml:space="preserve">q: quit  +/-: speed</text>
 </svg>
