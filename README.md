@@ -1,5 +1,7 @@
 # dancing-parrot
 
+![The parrot singing in a terminal](docs/screenshot.svg)
+
 An animated dancing blue-and-yellow macaw for your Linux terminal. It sways,
 stomps, flaps, every few seconds spins a full 360° turn, and sings: its beak
 moves in time with a synthesised song while the lyrics run karaoke-style
@@ -98,6 +100,9 @@ pytest
 ruff check . && ruff format --check .
 mypy
 ```
+
+`docs/screenshot.svg` is drawn from the app's own frame data; regenerate it
+with `PYTHONPATH=src python3 scripts/screenshot.py`.
 
 ## Layout
 
