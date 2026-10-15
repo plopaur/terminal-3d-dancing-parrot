@@ -7,14 +7,16 @@ cell shows two vertically stacked pixels: the upper one as the foreground of
 
 from __future__ import annotations
 
+import contextlib
 import curses
 import time
 from dataclasses import dataclass
 
 from . import song
 from .audio import Singer
-from .frames import SCALE_FACTORS, TRANSPARENT, Frame, build_frame, scale
+from .frames import SCALE_FACTORS, Frame, build_frame, scale
 from .model import SHADE_KEYS
+from .sprites import TRANSPARENT
 
 # Base colour -> ((dark, mid, light) xterm-256 colours, 8-colour fallback).
 BASE_PALETTE: dict[str, tuple[tuple[int, int, int], int]] = {
@@ -36,9 +38,7 @@ COLORS: dict[str, tuple[int, int]] = {
 }
 
 # Without colour, show the lighting with shading characters.
-SHADES: dict[str, str] = {
-    key: "▒▓█"[level] for keys in SHADE_KEYS.values() for level, key in enumerate(keys)
-}
+SHADES: dict[str, str] = {key: "▒▓█"[level] for keys in SHADE_KEYS.values() for level, key in enumerate(keys)}
 
 NOTE_COLORS: tuple[int, ...] = (
     curses.COLOR_RED,
@@ -243,17 +243,14 @@ def _draw_lyric(
 
 def _add(screen: curses.window, y: int, x: int, text: str, attr: int) -> None:
     """addstr that tolerates writes touching the bottom-right cell."""
-    try:
+    with contextlib.suppress(curses.error):
         screen.addstr(y, x, text, attr)
-    except curses.error:
-        pass
 
 
 def _loop(screen: curses.window, settings: Settings) -> None:
-    try:
+    # Some terminals cannot hide the cursor; not fatal.
+    with contextlib.suppress(curses.error):
         curses.curs_set(0)
-    except curses.error:
-        pass  # Some terminals cannot hide the cursor; not fatal.
 
     palette = Palette()
     color = settings.color and palette.enabled

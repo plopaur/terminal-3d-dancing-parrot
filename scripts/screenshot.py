@@ -13,8 +13,9 @@ from html import escape
 from pathlib import Path
 
 from dancing_parrot import song
-from dancing_parrot.frames import TRANSPARENT, build_frame
+from dancing_parrot.frames import build_frame
 from dancing_parrot.renderer import COLORS, HIGHLIGHT_KEY, HINT, NOTE_COLORS, hint_x, layout, lyric_line
+from dancing_parrot.sprites import TRANSPARENT
 
 OUTPUT = Path(__file__).resolve().parent.parent / "docs" / "screenshot.svg"
 TICK = 3
@@ -73,8 +74,7 @@ def main() -> None:
     for i, dot in enumerate(("#f38ba8", "#f9e2af", "#a6e3a1")):
         out.append(f'<circle cx="{20 + 20 * i}" cy="{BAR // 2}" r="6" fill="{dot}"/>')
     out.append(
-        f'<text x="{svg_w // 2}" y="{BAR // 2 + 5}" fill="{DIM}" text-anchor="middle">'
-        "dancing-parrot</text>"
+        f'<text x="{svg_w // 2}" y="{BAR // 2 + 5}" fill="{DIM}" text-anchor="middle">dancing-parrot</text>'
     )
 
     # Pixels, merging horizontal runs of one colour to keep the file small.

@@ -143,9 +143,7 @@ def _pixels(position: int, step: int, spin: bool, singing: bool) -> tuple[str, .
     return render(voxels, angle, SPIN_AXIS, CANVAS_WIDTH, CANVAS_HEIGHT)
 
 
-def build_frame(
-    tick: int, *, palette_size: int = 6, spin: bool = True, singing: bool = False
-) -> Frame:
+def build_frame(tick: int, *, palette_size: int = 6, spin: bool = True, singing: bool = False) -> Frame:
     """Build the frame shown at animation step ``tick`` (any integer >= 0).
 
     The dance alternates ``DANCE_TICKS`` of swaying with a ``SPIN_TICKS``

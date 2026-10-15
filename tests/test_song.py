@@ -1,3 +1,5 @@
+from itertools import pairwise
+
 import pytest
 
 from dancing_parrot import song
@@ -19,7 +21,7 @@ def test_beak_closes_during_rests_and_between_notes() -> None:
     singing = [s.singing for s in samples]
     assert any(singing) and not all(singing)
     # Many separate open/close cycles, not one long open beak.
-    openings = sum(1 for a, b in zip(singing, singing[1:]) if b and not a)
+    openings = sum(1 for a, b in pairwise(singing) if b and not a)
     assert openings >= 20
 
 

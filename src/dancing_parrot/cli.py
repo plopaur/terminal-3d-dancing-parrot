@@ -54,9 +54,7 @@ def build_parser() -> argparse.ArgumentParser:
     )
     parser.add_argument("--no-color", action="store_true", help="disable colours")
     parser.add_argument("--no-spin", action="store_true", help="don't do the 360 degree pirouette")
-    parser.add_argument(
-        "-m", "--mute", action="store_true", help="sing silently (lyrics only, no sound)"
-    )
+    parser.add_argument("-m", "--mute", action="store_true", help="sing silently (lyrics only, no sound)")
     parser.add_argument("-V", "--version", action="version", version=f"%(prog)s {__version__}")
     return parser
 

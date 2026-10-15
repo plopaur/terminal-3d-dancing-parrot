@@ -13,6 +13,7 @@ and singing silently.
 
 from __future__ import annotations
 
+import contextlib
 import importlib
 import io
 import os
@@ -92,10 +93,8 @@ class _TempWav:
         return self.path
 
     def __exit__(self, *exc_info: object) -> None:
-        try:
+        with contextlib.suppress(OSError):
             os.unlink(self.path)
-        except OSError:
-            pass
 
 
 def _terminate(process: subprocess.Popen[bytes] | None) -> None:

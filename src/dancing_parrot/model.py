@@ -63,17 +63,10 @@ class Part:
 @lru_cache(maxsize=64)
 def inflate(sprite: tuple[str, ...], part: Part) -> tuple[tuple[int, int, int, str], ...]:
     """Voxels ``(x, y, z, colour)`` of ``sprite`` inflated according to ``part``."""
-    opaque = [
-        (x, y) for y, row in enumerate(sprite) for x, pixel in enumerate(row) if pixel != TRANSPARENT
-    ]
+    opaque = [(x, y) for y, row in enumerate(sprite) for x, pixel in enumerate(row) if pixel != TRANSPARENT]
     opaque_set = set(opaque)
     height, width = len(sprite), max(len(row) for row in sprite)
-    edge = [
-        (x, y)
-        for x in range(-1, width + 1)
-        for y in range(-1, height + 1)
-        if (x, y) not in opaque_set
-    ]
+    edge = [(x, y) for x in range(-1, width + 1) for y in range(-1, height + 1) if (x, y) not in opaque_set]
 
     voxels = []
     for x, y in opaque:

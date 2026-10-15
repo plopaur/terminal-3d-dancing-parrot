@@ -36,6 +36,7 @@ def _line(*parts: tuple[str, int | None, float]) -> tuple[Syllable, ...]:
 
 # An original tune: four lines of eight beats each, ending with a rest so
 # the beak closes between lines.
+# fmt: off
 LYRICS: tuple[tuple[Syllable, ...], ...] = (
     _line(
         ("Pol", 72, 0.5), ("ly ", 72, 0.5), ("wants ", 74, 0.5), ("to ", 76, 0.5),
@@ -54,6 +55,7 @@ LYRICS: tuple[tuple[Syllable, ...], ...] = (
         ("in ", 74, 0.5), ("town!", 72, 2.5), ("", None, 2),
     ),
 )
+# fmt: on
 
 DURATION = sum(s.beats for line in LYRICS for s in line) * BEAT
 """Length of one pass through the song, in seconds."""

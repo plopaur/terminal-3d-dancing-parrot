@@ -118,7 +118,7 @@ def test_pipe_backend_missing_player() -> None:
 
 def test_file_loop_backend_restarts_and_resyncs() -> None:
     # `sh -c "sleep 0.1" <file>` stands in for afplay playing a short file.
-    backend = FileLoopBackend(["sh", "-c", "test -s \"$0\" && sleep 0.1"])
+    backend = FileLoopBackend(["sh", "-c", 'test -s "$0" && sleep 0.1'])
     stop, (result, origins), thread = _run_in_thread(backend)
     assert _wait(lambda: len(origins) >= 3)  # Restarted for each loop.
     assert origins == sorted(origins)
