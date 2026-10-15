@@ -1,0 +1,48 @@
+[build-system]
+requires = ["setuptools>=69"]
+build-backend = "setuptools.build_meta"
+
+[project]
+name = "dancing-parrot"
+version = "1.0.0"
+description = "An animated dancing parrot for the terminal"
+readme = "README.md"
+requires-python = ">=3.10"
+dependencies = [
+    # Python on Windows ships without curses.
+    "windows-curses>=2.3; sys_platform == 'win32'",
+]
+classifiers = [
+    "Environment :: Console :: Curses",
+    "Operating System :: POSIX :: Linux",
+    "Operating System :: MacOS",
+    "Operating System :: Microsoft :: Windows",
+    "Programming Language :: Python :: 3",
+]
+
+[project.optional-dependencies]
+# Cross-platform audio streaming with an exact clock; without it the
+# built-in players are used.
+sound = ["sounddevice>=0.4.6"]
+dev = ["pytest>=8", "ruff>=0.6", "mypy>=1.10"]
+
+[project.scripts]
+dancing-parrot = "dancing_parrot.cli:main"
+
+[tool.setuptools.packages.find]
+where = ["src"]
+
+[tool.pytest.ini_options]
+testpaths = ["tests"]
+pythonpath = ["src"]
+
+[tool.ruff]
+line-length = 110
+target-version = "py310"
+
+[tool.ruff.lint]
+select = ["E", "F", "W", "I", "B", "UP", "SIM"]
+
+[tool.mypy]
+strict = true
+files = ["src"]
